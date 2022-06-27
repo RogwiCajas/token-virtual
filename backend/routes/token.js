@@ -9,7 +9,7 @@ const jwt = require('jsonwebtoken');
 router.get('/', async function(req, res, next) {
   await tokenModel.findAll().then(
     (data) => {
-        res.send({token: data}); 
+        res.send({token_creados: data}); 
     }
   ).catch((err) => {
       res.send({error: err});
@@ -21,6 +21,7 @@ router.get('/', async function(req, res, next) {
 cada 60 segundos.
  */
 router.get('/generarToken/:usuario', async function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
   //genera el token pra un usuario, el token tiene vida util de 60 seg
   let usuario = req.params.usuario;
   //firma del token para ese usuario con duracion de 60 s
@@ -46,16 +47,18 @@ router.get('/generarToken/:usuario', async function(req, res, next) {
  * Endpoint el cual sea consumido desde Postman para simular la autenticación.
  */
 router.get('/usarToken/:usuario/:token', verificar, async function(req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
   //una vez se pasa el middleware de authenticacion,
   //el usuario podra acceder a esta variable, antes de que culminen los 60 s
-  const dataProtegida = "Información Valiosa";
-  res.send({data: dataProtegida})
+  const respuesta = "Token Válido";
+  res.send({data: respuesta})
 });
 
 /*
 *funcion middleware localizada aqui por facilidad 
 */
 function verificar(req, res, next){
+  res.header("Access-Control-Allow-Origin", "*");
   //obtenemos el usuario y el token con el que desea autenticarse
   let usuario = req.params.usuario;
   let token = req.params.token;
@@ -63,7 +66,7 @@ function verificar(req, res, next){
   if(token == null || usuario == null) return res.send({status: "403", msg: "Acceso denegado"});
 
   jwt.verify(token, "secret_key", (err, user) => {
-    if(err) return res.send({status: "404", msg: "Acceso denegado: no existe un usuario asociado a ese token (caducó)"});
+    if(err) return res.send({status: "404", data: "Token caducó"});
     //avanza al endpoint ya que el token es valido
     req.user = user;
     next();
