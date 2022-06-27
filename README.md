@@ -1,11 +1,19 @@
 # token-virtual
---backend  
+## backend  
     Node-Express
---Frontend
+### dependencias
+* jsonwebtoken
+* express 
+* sequelize 
+## Frontend
     Reactjs
---Base de datos 
+### dependencias
+* @reduxjs/toolkit
+* axios
+* react-redux
+## Base de datos 
     postgresql
---Comunicacion
-    hTTP
+## Comunicacion
+    HTTP
 
     
